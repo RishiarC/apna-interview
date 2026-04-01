@@ -36,9 +36,11 @@ class QuizSessionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TaskSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Task
-        fields = '__all__'
+        fields = ['id', 'user', 'title', 'description', 'is_completed', 'created_at']
 
 class JobRecommendationSerializer(serializers.ModelSerializer):
     class Meta:
