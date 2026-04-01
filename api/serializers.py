@@ -11,7 +11,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'domain', 'experience_level', 'job_readiness_score']
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = UserProfileSerializer(read_only=True)
+    profile = UserProfileSerializer(required=False)
 
     class Meta:
         model = User
@@ -19,8 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
+        profile_data = validated_data.pop('profile', {})
         user = User.objects.create_user(**validated_data)
-        UserProfile.objects.create(user=user)
+        UserProfile.objects.create(user=user, **profile_data)
         return user
 
 class QuestionSerializer(serializers.ModelSerializer):
