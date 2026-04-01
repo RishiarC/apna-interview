@@ -41,10 +41,10 @@ class QuizSessionViewSet(viewsets.ModelViewSet):
 
         if round_number == 1:
             difficulty = 'Easy + Medium'
-            count = 30
+            count = 6
         elif round_number == 2:
             difficulty = 'Medium + Hard'
-            count = 30
+            count = 8
         else:
             difficulty = 'Hard'
             count = 10

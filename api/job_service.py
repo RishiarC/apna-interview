@@ -18,7 +18,23 @@ def normalize_job_list(raw_data):
     return []
 
 
+def extract_job_value(job, keys, default=None):
+    for key in keys:
+        if isinstance(job, dict) and key in job and job[key]:
+            return job[key]
+    return default
+
+
+def extract_job_link(job):
+    return extract_job_value(job, [
+        'job_url', 'url', 'link', 'redirect_url', 'apply_url', 'jobPostingUrl'
+    ], 'https://www.linkedin.com')
+
+
 def fetch_linkedin_jobs(query='Software Engineer', location='Remote'):
+    if not RAPIDAPI_KEY or not LINKEDIN_HOST:
+        return []
+
     url = f'https://{LINKEDIN_HOST}/active-jb-1h'
     params = {
         'keywords': query,
@@ -48,10 +64,10 @@ def get_job_recommendations(user_domain, user_accuracy):
 
     if isinstance(jobs_data, list) and jobs_data:
         for job in jobs_data[:10]:
-            title = job.get('job_title') or job.get('title') or 'Interview Role'
-            company = job.get('company_name') or job.get('company') or 'Unknown Company'
-            link = job.get('job_url') or job.get('url') or '#'
-            eligibility = 'You are Eligible' if user_accuracy >= 65 else 'Needs Improvement'
+            title = extract_job_value(job, ['job_title', 'title', 'position', 'role'], 'Interview Role')
+            company = extract_job_value(job, ['company_name', 'company', 'employer', 'companyName'], 'Unknown Company')
+            link = extract_job_link(job)
+            eligibility = 'Eligible' if user_accuracy >= 65 else 'Needs Improvement'
             recommendations.append({
                 'title': title,
                 'company': company,
@@ -63,12 +79,26 @@ def get_job_recommendations(user_domain, user_accuracy):
     if not recommendations:
         recommendations = [
             {
-                'title': f'{user_domain} Analyst',
-                'company': 'AI Ready Labs',
-                'link': 'https://www.example.com/apply',
-                'eligibility': 'You are Eligible' if user_accuracy >= 65 else 'Needs Improvement',
+                'title': f'{user_domain} Engineer',
+                'company': 'Acme Talent Partners',
+                'link': 'https://www.linkedin.com/jobs',
+                'eligibility': 'Eligible' if user_accuracy >= 65 else 'Needs Improvement',
                 'skills_matched': [user_domain],
-            }
+            },
+            {
+                'title': f'{user_domain} Specialist',
+                'company': 'TalentForge',
+                'link': 'https://www.indeed.com',
+                'eligibility': 'Eligible' if user_accuracy >= 65 else 'Needs Improvement',
+                'skills_matched': [user_domain],
+            },
+            {
+                'title': f'{user_domain} Associate',
+                'company': 'Recruit Labs',
+                'link': 'https://www.example.com',
+                'eligibility': 'Eligible' if user_accuracy >= 65 else 'Needs Improvement',
+                'skills_matched': [user_domain],
+            },
         ]
 
     return recommendations
