@@ -25,7 +25,11 @@ SECRET_KEY = "django-insecure-o++rv87ateyn+)kxa_ah61ex*3+)y1a%_(2wc73n3y^*8%*9!%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "apna-interview-1.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 # Application definition
